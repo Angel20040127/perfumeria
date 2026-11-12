@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:body>
+        <ui:composition template="/plantillas/layout.xhtml">
+            <ui:define name="content">
+                <!-- Contenedor principal con la clase global de estilos -->
+                <div class="fondo-degradado">
+                    
+                    <!-- Cabecera principal estilizada -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: rgba(255, 255, 255, 0.95); padding: 18px 25px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+                        <h:outputText value="🛒 Tus productos seleccionados" style="font-size: 24px; font-weight: bold; color: #2c3e50;" />
+                        <!-- CORREGIDO: Se cambió "/vista/cliente" por "/vistas/cliente" en plural -->
+                        <p:button outcome="/vistas/cliente" value="Catálogo" icon="ui-icon-home" styleClass="ui-button-warning" style="font-weight: bold; border-radius: 8px; background: #e67e22; border: none; color: white;" />
+                    </div>
+
+                    <h:form id="formCarrito">
+                        <p:panel style="border-radius: 12px; border: none; box-shadow: 0 8px 25px rgba(0,0,0,0.15); background: rgba(255, 255, 255, 0.95); padding: 15px;">
+                            <p:dataTable value="#{carritoBean.listaCarrito}" var="item" emptyMessage="No hay productos en el carrito.">
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{item.perfume.nombre}" style="font-weight: bold; color: #2c3e50;" />
+                                </p:column>
+                                <p:column headerText="Categoría">
+                                    <span style="background-color: #fef9e7; color: #d4ac0d; padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; border: 1px solid #f9e79f;">
+                                        #{item.perfume.categoria}
+                                    </span>
+                                </p:column>
+                                <p:column headerText="Precio Unitario">
+                                    <h:outputText value="#{item.perfume.precio}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Cantidad" style="text-align: center; width: 160px;">
+                                    <p:commandButton icon="ui-icon-minusthick" action="#{carritoBean.disminuirCantidad(item)}" update="@form" styleClass="ui-button-flat" style="color: #e74c3c;" />
+                                    <h:outputText value="#{item.cantidad}" style="margin: 0 12px; font-weight: bold; font-size: 16px;" />
+                                    <p:commandButton icon="ui-icon-plusthick" action="#{carritoBean.incrementarCantidad(item)}" update="@form" styleClass="ui-button-flat" style="color: #27ae60;" />
+                                </p:column>
+                                <p:column headerText="Subtotal">
+                                    <h:outputText value="#{item.subtotal}" style="font-weight: bold; color: #27ae60;">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Eliminar" style="text-align: center; width: 100px;">
+                                    <p:commandButton icon="ui-icon-minusthick" action="#{carritoBean.eliminarProducto(item)}" update="@form" styleClass="ui-button-danger" title="Eliminar" style="background: #e74c3c; border: none; color: white;" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

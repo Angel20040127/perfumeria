@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:body>
+        <ui:composition template="/plantillas/layout.xhtml">
+            <ui:define name="content">
+                <div class="fondo-degradado">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: rgba(255, 255, 255, 0.95); padding: 18px 25px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+                        <h:outputText value="Administrador" style="font-size: 24px; font-weight: bold; color: #2c3e50;" />
+                        
+                        <h:form style="margin: 0;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="color: #2c3e50; font-weight: bold;"> #{loginBean.usuario}</span>
+                                <h:commandButton value="Cerrar Sesión" action="#{loginBean.cerrarSesion()}" 
+                                                 style="background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer;" />
+                            </div>
+                        </h:form>
+                    </div>
+
+                    <h:form id="formAdmin">
+                        <p:growl id="messagesAdmin" showDetail="true" />
+
+                        <p:panel header="Administrar perfumes" style="border-radius: 12px; border: none; box-shadow: 0 8px 25px rgba(0,0,0,0.15); background: rgba(255, 255, 255, 0.95); padding: 20px; margin-bottom: 25px;">
+                            
+                            <p:panelGrid columns="2" styleClass="ui-panelgrid-blank" style="width: 100%; margin-bottom: 20px;">
+                                <p:outputLabel for="nombre" value="Nombre: *" style="font-weight: bold; color: #2c3e50;"/>
+                                <p:inputText id="nombre" value="#{adminBean.nombre}" required="true" style="width: 100%; border-radius: 6px;"/>
+
+                                <p:outputLabel for="descripcion" value="Descripción:" style="font-weight: bold; color: #2c3e50;"/>
+                                <p:inputTextarea id="descripcion" value="#{adminBean.descripcion}" rows="3" cols="30" style="width: 100%; border-radius: 6px;"/>
+
+                                <p:outputLabel for="categoria" value="Categoría:" style="font-weight: bold; color: #2c3e50;"/>
+                                <p:selectOneMenu id="categoria" value="#{adminBean.categoria}" style="width: 100%; border-radius: 6px;">
+                                    <f:selectItem itemLabel="Selecciona una" itemValue=""/>
+                                    <f:selectItem itemLabel="Caballero" itemValue="Caballero"/>
+                                    <f:selectItem itemLabel="Dama" itemValue="Dama"/>
+                                    <f:selectItem itemLabel="Unisex" itemValue="Unisex"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="precio" value="Precio:" style="font-weight: bold; color: #2c3e50;"/>
+                                <p:spinner id="precio" value="#{adminBean.precio}" min="0" stepFactor="50" style="width: 100%;"/>
+
+                                <p:outputLabel for="existencias" value="Existencias:" style="font-weight: bold; color: #2c3e50;"/>
+                                <p:spinner id="existencias" value="#{adminBean.existencias}" min="0" style="width: 100%;"/>
+                            </p:panelGrid>
+                            
+                            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                                <p:commandButton value="Guardar" action="#{adminBean.guardarPerfume()}" update="formAdmin tablaPerfumes" styleClass="ui-button-success" style="background: #27ae60; border: none; border-radius: 8px; font-weight: bold;" />
+                                <p:commandButton value="Cancelar" action="#{adminBean.limpiarFormulario()}" update="formAdmin" process="@this" type="reset" styleClass="ui-button-secondary" style="border-radius: 8px;" />
+                            </div>
+                        </p:panel>
+
+                        <p:panel header="Lista de Perfumes Registrados" style="border-radius: 12px; border: none; box-shadow: 0 8px 25px rgba(0,0,0,0.15); background: rgba(255, 255, 255, 0.95); padding: 20px;">
+                            <p:dataTable id="tablaPerfumes" value="#{adminBean.listaPerfumes}" var="perf" emptyMessage="No hay perfumes registrados." styleClass="p-datatable-gridlines">
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{perf.nombre}" style="font-weight: bold;" />
+                                </p:column>
+                                <p:column headerText="Categoría">
+                                    <h:outputText value="#{perf.categoria}" />
+                                </p:column>
+                                <p:column headerText="Precio">
+                                    <h:outputText value="#{perf.precio}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Existencias">
+                                    <h:outputText value="#{perf.existencias}" />
+                                </p:column>
+                                <p:column headerText="Acciones" style="text-align: center; width: 180px;">
+                                    <p:commandButton value="Editar" action="#{adminBean.cargarParaEditar(perf)}" process="@this" update=":formAdmin" styleClass="ui-button-warning" style="background: #f39c12; border: none; border-radius: 6px; margin-right: 5px;" />
+                                    <p:commandButton value="Eliminar" action="#{adminBean.eliminarPerfume(perf)}" process="@this" update="tablaPerfumes :formAdmin:messagesAdmin" styleClass="ui-button-danger" style="background: #c0392b; border: none; border-radius: 6px;" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:form>
+
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

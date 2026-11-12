@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:body>
+        <ui:composition template="/plantillas/layout.xhtml">
+            <ui:define name="content">
+                <!-- Fondo con diseño degradado sofisticado y elegante -->
+                <div style="padding: 30px; background: linear-gradient(135deg, #2c3e50 0%, #3498db 50%, #2c3e50 100%); min-height: 85vh;">
+                    
+                    <!-- Notificaciones flotantes -->
+                    <p:growl id="messages" showDetail="true" />
+
+                    <!-- Cabecera principal estilizada -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: rgba(255, 255, 255, 0.95); padding: 18px 25px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+                        <h:outputText value="✨ Catálogo Exclusivo de Perfumes" style="font-size: 24px; font-weight: bold; color: #2c3e50;" />
+                        <div style="display: flex; gap: 12px;">
+                            <p:button outcome="/vistas/carrito" value="Carrito (#{carritoBean.cantidadCarrito})" icon="pi pi-shopping-cart" styleClass="ui-button-warning" style="font-weight: bold; border-radius: 8px; background: #e67e22; border: none; color: white;" />
+                            <p:button outcome="/vistas/login" value="Iniciar Sesión" icon="pi pi-user" styleClass="ui-button-flat" style="border-radius: 8px; color: #2c3e50; font-weight: bold;" />
+                        </div>
+                    </div>
+                    
+                    <h:form id="formCatalogo">
+                        <!-- Menú de Categorías -->
+                        <p:panel style="margin-bottom: 25px; border-radius: 12px; border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.1); background: rgba(255, 255, 255, 0.95);">
+                            <p:tabMenu activeIndex="0">
+                                <p:menuitem value="Todos" action="#{catalogoBean.filtrarPor('Todos')}" update="@form"/>
+                                <p:menuitem value="Caballero" action="#{catalogoBean.filtrarPor('Caballero')}" update="@form"/>
+                                <p:menuitem value="Dama" action="#{catalogoBean.filtrarPor('Dama')}" update="@form"/>
+                                <p:menuitem value="Unisex" action="#{catalogoBean.filtrarPor('Unisex')}" update="@form"/>
+                            </p:tabMenu>
+                        </p:panel>
+
+                        <!-- Indicador de categoría -->
+                        <div style="margin-bottom: 20px; font-size: 16px; font-weight: 600; color: #ffffff; background: rgba(0, 0, 0, 0.3); padding: 10px 20px; border-radius: 8px; display: inline-block; backdrop-filter: blur(5px);">
+                            📁 Categoría actual: <span style="color: #f1c40f; font-weight: bold;">#{catalogoBean.categoriaActual}</span>
+                        </div>
+
+                        <!-- Cuadrícula de Perfumes -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 25px; justify-content: flex-start;">
+                            <ui:repeat value="#{catalogoBean.listaPerfumes}" var="perfume">
+                                <div style="flex: 1 1 280px; max-width: 320px;">
+                                    <p:panel header="#{perfume.nombre}" style="height: 100%; text-align: center; border-radius: 12px; border: none; box-shadow: 0 8px 25px rgba(0,0,0,0.15); background: #ffffff;">
+                                        
+                                        <!-- Badge de categoría -->
+                                        <div style="margin-bottom: 12px;">
+                                            <span style="background-color: #fef9e7; color: #d4ac0d; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #f9e79f;">
+                                                #{perfume.categoria}
+                                            </span>
+                                        </div>
+                                        
+                                        <!-- Descripción -->
+                                        <p style="color: #7f8c8d; font-size: 14px; margin-bottom: 15px; min-height: 40px;">
+                                            #{perfume.descripcion}
+                                        </p>
+                                        
+                                        <!-- Precio -->
+                                        <h:outputText value="#{perfume.precio}" style="font-size: 22px; font-weight: bold; color: #27ae60; display: block; margin-bottom: 20px;">
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                        
+                                        <!-- Botón con colores personalizados y confirmación -->
+                                        <p:commandButton value="Añadir al Carrito" 
+                                                         actionListener="#{catalogoBean.seleccionarPerfume(perfume)}"
+                                                         update="@form"
+                                                         icon="ui-icon-plusthick" 
+                                                         styleClass="ui-button-raised" 
+                                                         style="width: 100%; border-radius: 8px; font-weight: bold; padding: 8px; background: #2c3e50; border: none; color: white;">
+                                            <p:confirm header="Confirmación de Compra" message="¿Desea agregar #{perfume.nombre} al carrito?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:panel>
+                                </div>
+                            </ui:repeat>
+                        </div>
+
+                        <!-- ConfirmDialog Global conectado correctamente al bean -->
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style="background: white; border-radius: 8px;">
+                            <p:commandButton value="Sí, Seguro" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+                                             action="#{catalogoBean.confirmarAgregarAlCarrito()}" update=":messages formCatalogo" />
+                            <p:commandButton value="No aún" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:form>
+
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
